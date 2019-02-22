@@ -44,8 +44,8 @@ THE SOFTWARE.
 	</style>
 
 	<style name="Library" parent="VanillaBase">
-		<item name="android:windowActionBar">false</item>
-		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">true</item>
+		<item name="android:windowNoTitle">false</item>
 	</style>
 
 	<style name="PopupDialog" parent="android:Theme.Holo.Dialog.MinWidth">

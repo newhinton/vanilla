@@ -27,6 +27,7 @@ import ch.blinkenlights.android.medialibrary.MediaLibrary;
 import ch.blinkenlights.android.vanilla.ui.FancyMenu;
 import ch.blinkenlights.android.vanilla.ui.FancyMenuItem;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -153,6 +154,10 @@ public class LibraryActivity
 	 * The adapter for the currently visible list.
 	 */
 	private LibraryAdapter mCurrentAdapter;
+	/**
+	 * The Appbar
+	 */
+	private ActionBar mApplicationBar;
 
 
 	@Override
@@ -169,6 +174,8 @@ public class LibraryActivity
 
 		mLimiterScroller = (HorizontalScrollView)findViewById(R.id.limiter_scroller);
 		mLimiterViews = (ViewGroup)findViewById(R.id.limiter_layout);
+
+		mApplicationBar = getActionBar();
 
 		LibraryPagerAdapter pagerAdapter = new LibraryPagerAdapter(this, mLooper);
 		mPagerAdapter = pagerAdapter;
@@ -504,6 +511,8 @@ public class LibraryActivity
 	{
 		mLimiterViews.removeAllViews();
 
+		String title="";
+
 		Limiter limiterData = mPagerAdapter.getCurrentLimiter();
 		if (limiterData != null) {
 			String[] limiter = limiterData.names;
@@ -526,12 +535,19 @@ public class LibraryActivity
 				view.setTag(i);
 				view.setOnClickListener(this);
 				mLimiterViews.addView(view);
+				title+=limiter[i];
+				if(i != limiter.length-1){
+					title+=": ";
+				}
 			}
 
-			mLimiterScroller.setVisibility(View.VISIBLE);
+			mApplicationBar.setTitle(title);
+			//mLimiterScroller.setVisibility(View.VISIBLE);
 		} else {
 			mLimiterScroller.setVisibility(View.GONE);
+			mApplicationBar.setTitle(R.string.app_name);
 		}
+
 	}
 
 	/**

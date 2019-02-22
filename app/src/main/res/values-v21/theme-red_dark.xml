@@ -42,8 +42,6 @@
 	</style>
 
 	<style name="Red_dark.Library" parent="Red_dark.VanillaBase">
-		<item name="android:windowActionBar">false</item>
-		<item name="android:windowNoTitle">true</item>
 	</style>
 
 	<style name="Red_dark.PopupDialog" parent="android:Theme.Material.Dialog.MinWidth">
