@@ -28,6 +28,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.iosched.tabs.VanillaTabLayout;
 import android.view.View;
 import android.widget.Button;
@@ -107,10 +108,23 @@ public class ThemeHelper {
 			greenBucket / pixelCount,
 			blueBucket / pixelCount);
 
-		//return color;
 	}
 
+	/**
+	 * This is used to style the app based on the current song cover.
+	 * This call works asyncronously
+	 * @param song
+	 */
+	public static void themeBasedOnSongAsync(final Song song, final Activity a){
+		Handler ThemeHandler = new Handler();
+		ThemeHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				themeBasedOnSong(song,a);
+			}
+		});
 
+	}
 	/**
 	 * This is used to style the app based on the current song cover.
 	 * @param song
