@@ -75,10 +75,39 @@ public class ThemeHelper {
 	 * @return
 	 */
 	public static int getDominantColor(Bitmap bitmap) {
-		Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
-		final int color = newBitmap.getPixel(0, 0);
-		newBitmap.recycle();
-		return color;
+		//https://stackoverflow.com/questions/12408431/how-can-i-get-the-average-colour-of-an-image
+
+		if (null == bitmap) return Color.TRANSPARENT;
+
+		int redBucket = 0;
+		int greenBucket = 0;
+		int blueBucket = 0;
+		int alphaBucket = 0;
+
+		boolean hasAlpha = bitmap.hasAlpha();
+		int pixelCount = bitmap.getWidth() * bitmap.getHeight();
+		int[] pixels = new int[pixelCount];
+		bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+		for (int y = 0, h = bitmap.getHeight(); y < h; y++)
+		{
+			for (int x = 0, w = bitmap.getWidth(); x < w; x++)
+			{
+				int c = pixels[x + y * w]; // x + y * width
+				redBucket += (c >> 16) & 0xFF; // Color.red
+				greenBucket += (c >> 8) & 0xFF; // Color.greed
+				blueBucket += (c & 0xFF); // Color.blue
+				if (hasAlpha) alphaBucket += (c >>> 24); // Color.alpha
+			}
+		}
+
+		return Color.argb(
+			(hasAlpha) ? (alphaBucket / pixelCount) : 255,
+			redBucket / pixelCount,
+			greenBucket / pixelCount,
+			blueBucket / pixelCount);
+
+		//return color;
 	}
 
 
