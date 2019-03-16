@@ -37,7 +37,8 @@ THE SOFTWARE.
 	<application
 	    android:allowBackup="true"
 	    android:resizeableActivity="true"
-	    android:icon="@mipmap/icon"
+	    android:icon="@mipmap/ic_launcher"
+	    android:roundIcon="@mipmap/ic_launcher_round"
 	    android:label="@string/app_name">
 
 		<meta-data

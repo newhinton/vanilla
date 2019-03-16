@@ -2194,7 +2194,7 @@ public final class PlaybackService extends Service
 
 		Notification notification = mNotificationHelper.getNewNotification(getApplicationContext());
 		notification.contentView = views;
-		notification.icon = R.drawable.status_icon;
+		notification.icon = R.drawable.ic_speaker;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		notification.contentIntent = mNotificationAction;
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
