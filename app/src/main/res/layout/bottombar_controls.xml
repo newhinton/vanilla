@@ -23,17 +23,23 @@
 
 <ch.blinkenlights.android.vanilla.BottomBarControls
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:background="?tabs_background"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	>
-
 	<LinearLayout
 		android:layout_height="@dimen/row_normal_height"
 		android:layout_width="fill_parent"
 		android:background="@drawable/unbound_ripple_light"
 		android:gravity="center_vertical"
+		android:orientation="horizontal"
+		>
+	<LinearLayout
+		android:layout_height="@dimen/row_normal_height"
+		android:layout_width="wrap_content"
+		android:background="@drawable/unbound_ripple_light"
 		android:id="@+id/content_controls">
 
 		<ImageView
@@ -44,6 +50,7 @@
 			android:layout_marginLeft="@dimen/cover_padding"
 			android:layout_gravity="center_vertical"
 			android:contentDescription="@string/cover_art" />
+
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="0px"
@@ -70,6 +77,14 @@
 				android:textColor="@android:color/secondary_text_dark"
 				android:layout_height="wrap_content" />
 		</LinearLayout>
+
+		</LinearLayout>
+		<ch.blinkenlights.android.vanilla.VanillaImageButton
+			android:id="@+id/play_pause_bottombar"
+			android:layout_width="@dimen/row_normal_height"
+			android:layout_height="@dimen/row_normal_height"
+			android:layout_gravity="end"
+			android:src="@drawable/play" />
 	</LinearLayout>
 
 	<SearchView
@@ -78,7 +93,9 @@
 		android:layout_width="fill_parent"
 		android:iconifiedByDefault="false"
 		android:imeOptions="actionSearch|flagNoFullscreen"
-		android:id="@+id/search_view" />
+		android:id="@+id/search_view" >
+
+	</SearchView>
 
 
 </ch.blinkenlights.android.vanilla.BottomBarControls>

@@ -51,6 +51,7 @@ THE SOFTWARE.
 				android:layout_height="fill_parent" />
 		</HorizontalScrollView>
 	</LinearLayout>
+
 	<ch.blinkenlights.android.vanilla.SlidingView
 		android:id="@+id/sliding_view"
 		android:layout_width="fill_parent"
@@ -59,20 +60,26 @@ THE SOFTWARE.
 		android:orientation="horizontal"
 		vanilla:slider_handle_id="@+id/bottombar_controls"
 		vanilla:slider_slave_id="@+id/content">
-			<LinearLayout
-				android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:background="?overlay_background_color"
-				android:orientation="horizontal">
-				<include layout="@layout/bottombar_controls" android:id="@+id/bottombar_controls" />
-			</LinearLayout>
 
-			<include layout="@layout/seek_bar" />
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:background="?overlay_background_color"
+			android:orientation="horizontal">
 
-			<include layout="@layout/controls" />
+			<include
+				android:id="@+id/bottombar_controls"
+				layout="@layout/bottombar_controls" />
+		</LinearLayout>
 
-			<fragment class="ch.blinkenlights.android.vanilla.ShowQueueFragment"
-				android:id="@+id/queue"
-				android:layout_width="fill_parent" android:layout_height="fill_parent" />
+		<include layout="@layout/seek_bar" />
+
+		<include layout="@layout/controls" />
+
+		<fragment
+			android:id="@+id/queue"
+			class="ch.blinkenlights.android.vanilla.ShowQueueFragment"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
 	</ch.blinkenlights.android.vanilla.SlidingView>
 </merge>
