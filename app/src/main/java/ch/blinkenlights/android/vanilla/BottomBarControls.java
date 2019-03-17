@@ -110,7 +110,7 @@ public class BottomBarControls extends LinearLayout
 			openMenu();
 		} else if (tag instanceof MenuItem) {
 			mParentMenuConsumer.onOptionsItemSelected((MenuItem)tag);
-		} else if (view == mControlsContent && mParentClickConsumer != null) {
+		}else if (view == mControlsContent && mParentClickConsumer != null) {
 			// dispatch this click to parent, claiming it came from
 			// the top view (= this)
 			mParentClickConsumer.onClick(this);
@@ -150,7 +150,7 @@ public class BottomBarControls extends LinearLayout
 	 * @param owner the activity who will receive our callbacks
 	 */
 	@SuppressLint("NewApi") // PopupMenu with gravity is API19, checked by menuMargin()
-	public void enableOptionsMenu(Activity owner) {
+	public void enableOptionsMenu(Activity owner, boolean enableMenu) {
 		mParentMenuConsumer = owner;
 
 		ImageButton menuButton = getImageButton(getResources().getDrawable(R.drawable.ic_menu_moreoverflow));
@@ -173,6 +173,10 @@ public class BottomBarControls extends LinearLayout
 			}
 		}
 
+
+		if(!enableMenu){
+			return;
+		}
 		// Add menu button as last item
 		menuButton.setTag(mPopupMenu);
 		menuButton.setOnClickListener(this);

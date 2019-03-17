@@ -110,6 +110,7 @@ public abstract class PlaybackActivity extends Activity
 
 	protected CoverView mCoverView;
 	protected ImageButton mPlayPauseButton;
+	protected ImageButton mPlayPauseButtonBottomBar;
 	protected ImageButton mShuffleButton;
 	protected ImageButton mEndButton;
 
@@ -253,6 +254,9 @@ public abstract class PlaybackActivity extends Activity
 		case R.id.play_pause:
 			playPause();
 			break;
+		case R.id.play_pause_bottombar:
+			playPause();
+			break;
 		case R.id.previous:
 			rewindCurrentSong();
 			break;
@@ -275,6 +279,9 @@ public abstract class PlaybackActivity extends Activity
 	{
 		if ((toggled & PlaybackService.FLAG_PLAYING) != 0 && mPlayPauseButton != null) {
 			mPlayPauseButton.setImageResource((state & PlaybackService.FLAG_PLAYING) == 0 ? R.drawable.play : R.drawable.pause);
+		}
+		if ((toggled & PlaybackService.FLAG_PLAYING) != 0 && mPlayPauseButtonBottomBar != null) {
+			mPlayPauseButtonBottomBar.setImageResource((state & PlaybackService.FLAG_PLAYING) == 0 ? R.drawable.play : R.drawable.pause);
 		}
 		if ((toggled & PlaybackService.MASK_FINISH) != 0 && mEndButton != null) {
 			mEndButton.setImageResource(SongTimeline.FINISH_ICONS[PlaybackService.finishAction(state)]);
@@ -364,6 +371,18 @@ public abstract class PlaybackActivity extends Activity
 		mEndButton.setOnClickListener(this);
 		registerForContextMenu(mEndButton);
 	}
+
+	/**
+	 * Sets up onClick listeners for our common control buttons bar
+	 */
+	protected void bindControlButtonsWithBottomBar() {
+		bindControlButtons();
+		mPlayPauseButtonBottomBar = (ImageButton)findViewById(R.id.play_pause_bottombar);
+		mPlayPauseButtonBottomBar.setOnClickListener(this);
+	}
+
+
+
 
 	/**
 	 * Called by PlaybackService to update the current song.

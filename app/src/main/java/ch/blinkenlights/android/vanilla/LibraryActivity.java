@@ -182,7 +182,9 @@ public class LibraryActivity
 		mBottomBarControls = (BottomBarControls)findViewById(R.id.bottombar_controls);
 		mBottomBarControls.setOnClickListener(this);
 		mBottomBarControls.setOnQueryTextListener(this);
-		mBottomBarControls.enableOptionsMenu(this);
+
+		//dont show options here
+		mBottomBarControls.enableOptionsMenu(this, false);
 
 		if(PermissionRequestActivity.havePermissions(this) == false) {
 			PermissionRequestActivity.showWarning(this, getIntent());
@@ -198,7 +200,7 @@ public class LibraryActivity
 		}
 
 		loadLimiterIntent(getIntent());
-		bindControlButtons();
+		bindControlButtonsWithBottomBar();
 
 		if (state != null && state.getBoolean("launch_search")) {
 			mBottomBarControls.showSearch(true);
