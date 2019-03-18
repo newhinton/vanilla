@@ -23,6 +23,7 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import androidx.drawerlayout.widget.DrawerLayout;
 import ch.blinkenlights.android.medialibrary.MediaLibrary;
 import ch.blinkenlights.android.vanilla.ui.FancyMenu;
 import ch.blinkenlights.android.vanilla.ui.FancyMenuItem;
@@ -41,6 +42,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.iosched.tabs.VanillaTabLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +55,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import com.google.android.material.navigation.NavigationView;
 
 import androidx.viewpager.widget.ViewPager;
 
@@ -153,6 +157,7 @@ public class LibraryActivity
 	 * The adapter for the currently visible list.
 	 */
 	private LibraryAdapter mCurrentAdapter;
+	private Menu mMenu;
 
 
 	@Override
@@ -184,7 +189,7 @@ public class LibraryActivity
 		mBottomBarControls.setOnQueryTextListener(this);
 
 		//dont show options here
-		mBottomBarControls.enableOptionsMenu(this, false);
+		mBottomBarControls.enableOptionsMenu(this, true);
 
 		if(PermissionRequestActivity.havePermissions(this) == false) {
 			PermissionRequestActivity.showWarning(this, getIntent());
@@ -205,6 +210,41 @@ public class LibraryActivity
 		if (state != null && state.getBoolean("launch_search")) {
 			mBottomBarControls.showSearch(true);
 		}
+
+
+		final DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+
+		NavigationView navigationView = (NavigationView)findViewById(R.id.navigationView);
+		Menu menu = navigationView.getMenu();
+		Menu submenu = menu.addSubMenu("New Super SubMenu");
+
+		submenu.add("");
+		submenu.add("Super Item1");
+		submenu.add("Super Item2");
+		submenu.add("Super Item3");
+
+		navigationView.invalidate();
+
+		navigationView.setNavigationItemSelectedListener(
+			new NavigationView.OnNavigationItemSelectedListener() {
+				@Override
+				public boolean onNavigationItemSelected(MenuItem menuItem) {
+					// set item as selected to persist highlight
+					menuItem.setChecked(true);
+					// close drawer when item is tapped
+					drawerLayout.closeDrawers();
+
+
+					Log.e("menu", menuItem.toString());
+					// Add code here to update the UI based on the item selected
+					// For example, swap UI fragments here
+
+					return true;
+				}
+			});
+
+
+
 	}
 
 	@Override
