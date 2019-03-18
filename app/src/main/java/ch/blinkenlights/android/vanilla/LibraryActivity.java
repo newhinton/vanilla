@@ -28,6 +28,7 @@ import ch.blinkenlights.android.medialibrary.MediaLibrary;
 import ch.blinkenlights.android.vanilla.ui.FancyMenu;
 import ch.blinkenlights.android.vanilla.ui.FancyMenuItem;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -189,7 +190,7 @@ public class LibraryActivity
 		mBottomBarControls.setOnQueryTextListener(this);
 
 		//dont show options here
-		mBottomBarControls.enableOptionsMenu(this, true);
+		mBottomBarControls.enableOptionsMenu(this, false);
 
 		if(PermissionRequestActivity.havePermissions(this) == false) {
 			PermissionRequestActivity.showWarning(this, getIntent());
@@ -215,16 +216,7 @@ public class LibraryActivity
 		final DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
 
 		NavigationView navigationView = (NavigationView)findViewById(R.id.navigationView);
-		Menu menu = navigationView.getMenu();
-		Menu submenu = menu.addSubMenu("New Super SubMenu");
-
-		submenu.add("");
-		submenu.add("Super Item1");
-		submenu.add("Super Item2");
-		submenu.add("Super Item3");
-
-		navigationView.invalidate();
-
+		final Activity thisActivity = this;
 		navigationView.setNavigationItemSelectedListener(
 			new NavigationView.OnNavigationItemSelectedListener() {
 				@Override
@@ -234,7 +226,14 @@ public class LibraryActivity
 					// close drawer when item is tapped
 					drawerLayout.closeDrawers();
 
-
+					switch (menuItem.getItemId()) {
+						case R.id.now_playing_menu:
+							openPlaybackActivity();
+							break;
+						case R.id.settings_menu:
+							thisActivity.startActivity(new Intent(thisActivity, PreferencesActivity.class));
+							break;
+					}
 					Log.e("menu", menuItem.toString());
 					// Add code here to update the UI based on the item selected
 					// For example, swap UI fragments here
