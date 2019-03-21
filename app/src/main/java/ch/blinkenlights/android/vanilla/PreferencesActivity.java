@@ -34,6 +34,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.CheckBoxPreference;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,9 @@ import android.net.Uri;
 import android.util.TypedValue;
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.blinkenlights.android.vanilla.settings.export.Export;
+import ch.blinkenlights.android.vanilla.settings.export.Import;
 
 /**
  * The preferences activity in which one can change application preferences.
@@ -91,14 +95,39 @@ public class PreferencesActivity extends PreferenceActivity
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu
+		// this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.settingsmenu, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		if (item.getItemId() == android.R.id.home) {
-			finish();
-			return true;
-		} else {
-			return super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				finish();
+				return true;
+			case R.id.settings_menu_export:
+				Export.exportSettings(this);
+				return true;
+			case R.id.settings_menu_import:
+				Import.importSettings(this);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+
 		}
+
+	}
+
+	/**
+	 *	This handles the callback for the resultfile of the filepicker for the import.
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+		Import.interpretResult(requestCode, resultCode,resultData, this);
 	}
 
 	@Override
