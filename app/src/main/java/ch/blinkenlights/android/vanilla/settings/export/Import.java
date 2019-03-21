@@ -19,11 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
 import ch.blinkenlights.android.vanilla.SharedPrefHelper;
 
 public class Import extends Activity {
@@ -124,6 +126,38 @@ public class Import extends Activity {
 					}
 
 				}
+			}
+			if(prefs.item(j).getNodeName().equals("mediaLibrary")){
+				NodeList preferences = prefs.item(j).getChildNodes();
+				MediaLibrary.Preferences mlPrefs= MediaLibrary.getPreferences(a.getApplicationContext());
+				for (int i = 0; i < preferences.getLength(); i++) {
+					Node n = preferences.item(i);
+					if (n.getNodeName().equals("bastp")) {
+						mlPrefs.forceBastp=Boolean.valueOf(n.getTextContent());
+					}
+					if (n.getNodeName().equals("groupByFolder")) {
+						mlPrefs.groupAlbumsByFolder=Boolean.valueOf(n.getTextContent());
+					}
+
+					if (n.getNodeName().equals("excludedAlbums")) {
+						NodeList folderlist=n.getChildNodes();
+						ArrayList<String> folders = new ArrayList<>();
+						for (int e = 0; e < folderlist.getLength(); e++) {
+							folders.add(folderlist.item(e).getTextContent());
+						}
+						mlPrefs.mediaFolders=folders;
+					}
+
+					if (n.getNodeName().equals("includedAlbums")) {
+						NodeList folderlist=n.getChildNodes();
+						ArrayList<String> folders = new ArrayList<>();
+						for (int e = 0; e < folderlist.getLength(); e++) {
+							folders.add(folderlist.item(e).getTextContent());
+						}
+						mlPrefs.mediaFolders=folders;
+					}
+				}
+				MediaLibrary.setPreferences(a.getApplicationContext(),mlPrefs);
 			}
 		}
 		settings.apply();
