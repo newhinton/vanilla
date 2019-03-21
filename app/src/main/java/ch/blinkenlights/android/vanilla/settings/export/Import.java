@@ -2,14 +2,29 @@ package ch.blinkenlights.android.vanilla.settings.export;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import ch.blinkenlights.android.vanilla.SharedPrefHelper;
 
 public class Import extends Activity {
 
@@ -71,8 +86,57 @@ public class Import extends Activity {
 					e.printStackTrace();
 				}
 				Log.e(TAG, "imported: "+stringBuilder.toString());
-
+				try {
+					extractSettings(stringBuilder.toString(), a);
+				} catch (ParserConfigurationException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (SAXException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+	}
+
+	private static void extractSettings(String dom, Activity a) throws ParserConfigurationException, IOException, SAXException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+
+		builder = factory.newDocumentBuilder();
+		Document document = builder.parse(new InputSource(new StringReader(dom)));
+
+		Element root = document.getDocumentElement();
+
+		NodeList prefs = root.getChildNodes();
+
+		SharedPreferences.Editor settings = SharedPrefHelper.getSettings(a).edit();
+
+		for (int j = 0; j < prefs.getLength(); j++) {
+			Log.e(TAG, "conent: "+prefs.item(j).getNodeName());
+			if(prefs.item(j).getNodeName().equals("preferences")){
+				NodeList preferences = prefs.item(j).getChildNodes();
+				for (int i = 0; i < preferences.getLength(); i++) {
+					Node n = preferences.item(i);
+					Log.e(TAG, "conent: "+n.getNodeName()+" "+n.getTextContent());
+
+					if (n.getNodeType() == Node.ELEMENT_NODE) {
+						Element elem = (Element) n;
+						String type = elem.getAttribute("type");
+						if(type.equals("boolean")){
+							settings.putBoolean(n.getNodeName(), Boolean.valueOf(n.getTextContent()));
+						}
+						if(type.equals("int")){
+							settings.putInt(n.getNodeName(), Integer.valueOf(n.getTextContent()));
+						}
+						if(type.equals("string")){
+							settings.putString(n.getNodeName(), n.getTextContent());
+						}
+					}
+
+				}
+			}
+		}
+		settings.apply();
 	}
 }

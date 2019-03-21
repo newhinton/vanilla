@@ -52,28 +52,29 @@ public class Export {
 			SharedPreferences sharedPrefs = SharedPrefHelper.getSettings(activity);
 
 			for (Pair<String, Object> p:ImportExportLists.getPreferencesList()) {
-				Element pref = doc.createElement("preference");
+				Element pref = doc.createElement(p.first);
 
 
 				if(p.second instanceof String){
 					String res = sharedPrefs.getString(p.first, (String) p.second);
-					pref.setAttribute(p.first,res);
+					pref.setAttribute("type","string");
+					pref.setTextContent(res);
 				}
 
 				if(p.second instanceof Boolean){
 					boolean res = sharedPrefs.getBoolean(p.first, (boolean)p.second);
-					pref.setAttribute(p.first,String.valueOf(res));
+					pref.setAttribute("type","boolean");
+					pref.setTextContent(String.valueOf(res));
 				}
 
 				if(p.second instanceof Integer){
 					int res = sharedPrefs.getInt(p.first, (int)p.second);
-					pref.setAttribute(p.first,String.valueOf(res));
+					pref.setAttribute("type","int");
+					pref.setTextContent(String.valueOf(res));
 				}
 
 				preferences.appendChild(pref);
 			}
-
-
 
 			// write the content into xml
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
