@@ -18,7 +18,7 @@
 -->
 
 <resources>
-	<style name="Orange_light.VanillaBase" parent="android:Theme.Material.Light.DarkActionBar">
+	<style name="Orange_light.VanillaBase" parent="Theme.AppCompat.DayNight.DarkActionBar">
 		<item name="overlay_background_color">@color/overlay_background_light</item>
 		<item name="overlay_foreground_color">@color/overlay_foreground_light</item>
 		<item name="float_color">@color/material_grey_400</item>

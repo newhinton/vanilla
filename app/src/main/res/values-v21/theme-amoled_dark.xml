@@ -19,7 +19,7 @@
 
 <resources>
 	<!-- dark theme -->
-	<style name="Amoled_dark.VanillaBase" parent="android:Theme.Material">
+	<style name="Amoled_dark.VanillaBase" parent="Theme.AppCompat.Light.DarkActionBar">
 		
 		<item name="android:colorBackground">@android:color/black</item>
 		<item name="overlay_background_color">@android:color/black</item>

@@ -105,7 +105,7 @@ EOF
 
 	if($this->{dark} == 0) {
 	$DATA .= << "EOF"
-	<style name="${tid}VanillaBase" parent="android:Theme.Material.Light.DarkActionBar">
+	<style name="${tid}VanillaBase" parent="Theme.AppCompat.DayNight.DarkActionBar">
 		<item name="overlay_background_color">\@color/overlay_background_light</item>
 		<item name="overlay_foreground_color">\@color/overlay_foreground_light</item>
 		<item name="float_color">\@color/material_grey_400</item>
@@ -147,7 +147,7 @@ EOF
 	} else {
 	$DATA .= << "EOF"
 	<!-- dark theme -->
-	<style name="${tid}VanillaBase" parent="android:Theme.Material">
+	<style name="${tid}VanillaBase" parent="Theme.AppCompat.Light.DarkActionBar">
 		<item name="overlay_background_color">\@color/overlay_background_dark</item>
 		<item name="overlay_foreground_color">\@color/overlay_foreground_dark</item>
 		<item name="float_color">\@color/material_grey_900</item>
