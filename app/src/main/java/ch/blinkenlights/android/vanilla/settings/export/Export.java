@@ -25,6 +25,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
 import ch.blinkenlights.android.vanilla.R;
 import ch.blinkenlights.android.vanilla.SharedPrefHelper;
 
@@ -40,12 +41,10 @@ public class Export {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-			// root elements
 			Document doc = docBuilder.newDocument();
 			Element rootElement = doc.createElement("playerSettings");
 			doc.appendChild(rootElement);
 
-			// staff elements
 			Element preferences = doc.createElement("preferences");
 			rootElement.appendChild(preferences);
 
@@ -77,6 +76,38 @@ public class Export {
 				preferences.appendChild(pref);
 			}
 
+			Element mediaLibrary = doc.createElement("mediaLibrary");
+			rootElement.appendChild(mediaLibrary);
+
+			MediaLibrary.Preferences mlPrefs= MediaLibrary.getPreferences(activity.getApplicationContext());
+
+			Element bastp = doc.createElement("bastp");
+			bastp.setTextContent(String.valueOf(mlPrefs.forceBastp));
+			mediaLibrary.appendChild(bastp);
+
+			Element groupByFolder = doc.createElement("groupByFolder");
+			groupByFolder.setTextContent(String.valueOf(mlPrefs.groupAlbumsByFolder));
+			mediaLibrary.appendChild(groupByFolder);
+
+
+			Element excludedAlbums = doc.createElement("excludedAlbums");
+			mediaLibrary.appendChild(excludedAlbums);
+
+			for (String folderpath:mlPrefs.blacklistedFolders) {
+				Element folder = doc.createElement("folder");
+				folder.setTextContent(folderpath);
+				excludedAlbums.appendChild(folder);
+			}
+
+			Element includedAlbums = doc.createElement("includedAlbums");
+			mediaLibrary.appendChild(includedAlbums);
+
+			for (String folderpath:mlPrefs.mediaFolders) {
+				Element folder = doc.createElement("folder");
+				folder.setTextContent(folderpath);
+				includedAlbums.appendChild(folder);
+			}
+
 			// write the content into xml
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -85,7 +116,7 @@ public class Export {
 
 			StringWriter stringBuilder = new StringWriter();
 			transformer.transform(source, new StreamResult(stringBuilder));
-			//Log.e(TAG, "export: "+stringBuilder.toString());
+			Log.e(TAG, "export: "+stringBuilder.toString());
 
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
