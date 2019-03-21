@@ -412,4 +412,5 @@ THE SOFTWARE.
 	<string name="theme_name_red_light">Red</string>
 	<string name="theme_name_red_dark">Red (Dark)</string>
 	<string name="theme_name_amoled_dark">Pitch Black (AMOLED)</string>
+	<string name="settings_export_toast_success">Exported Settings to</string>
 </resources>

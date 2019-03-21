@@ -32,7 +32,7 @@ public class Import extends Activity {
 	private static final String TAG = "Importer";
 
 	public static void importSettings(Activity a) {
-		Log.e(TAG, "import!");
+		//Log.e(TAG, "import!");
 		performFileSearch(a);
 	}
 
@@ -54,21 +54,13 @@ public class Import extends Activity {
 		// To search for all documents available via installed storage providers,
 		// it would be "*/*".
 		intent.setType("text/xml");
-
 		a.startActivityForResult(intent, READ_REQUEST_CODE);
-		Log.e(TAG, "import?");
 	}
 
 	public static void interpretResult(int reqCode, int resCode, Intent res, Activity a){
 		if (reqCode == READ_REQUEST_CODE && resCode == Activity.RESULT_OK) {
 			if (res != null) {
 				Uri uri = res.getData();
-
-				//File f = new File(new URI(uri.toString()));
-				Log.i(TAG, "Uri toString: " + uri.toString());
-				Log.i(TAG, "Uri absolute: " + uri.getEncodedPath());
-				Log.i(TAG, "Uri     path: " + uri.getPath());
-				//Log.i(TAG, "File    path: " + f.getAbsolutePath());
 
 				StringBuilder stringBuilder = new StringBuilder();
 				try {
@@ -85,7 +77,7 @@ public class Import extends Activity {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				Log.e(TAG, "imported: "+stringBuilder.toString());
+				//Log.e(TAG, "imported: "+stringBuilder.toString());
 				try {
 					extractSettings(stringBuilder.toString(), a);
 				} catch (ParserConfigurationException e) {
@@ -113,13 +105,10 @@ public class Import extends Activity {
 		SharedPreferences.Editor settings = SharedPrefHelper.getSettings(a).edit();
 
 		for (int j = 0; j < prefs.getLength(); j++) {
-			Log.e(TAG, "conent: "+prefs.item(j).getNodeName());
 			if(prefs.item(j).getNodeName().equals("preferences")){
 				NodeList preferences = prefs.item(j).getChildNodes();
 				for (int i = 0; i < preferences.getLength(); i++) {
 					Node n = preferences.item(i);
-					Log.e(TAG, "conent: "+n.getNodeName()+" "+n.getTextContent());
-
 					if (n.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) n;
 						String type = elem.getAttribute("type");

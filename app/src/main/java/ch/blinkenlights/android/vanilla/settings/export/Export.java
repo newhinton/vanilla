@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,13 +25,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import ch.blinkenlights.android.vanilla.R;
 import ch.blinkenlights.android.vanilla.SharedPrefHelper;
 
 public class Export {
 
 	private static final String TAG = "Exporter";
 	public static void exportSettings(Activity activity){
-		Log.e(TAG, "export!");
 		writeXML(activity);
 	}
 
@@ -84,13 +85,14 @@ public class Export {
 
 			StringWriter stringBuilder = new StringWriter();
 			transformer.transform(source, new StreamResult(stringBuilder));
-			Log.e(TAG, "export: "+stringBuilder.toString());
+			//Log.e(TAG, "export: "+stringBuilder.toString());
 
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 			String fDate = sdf.format(new Date());
 
 			writeFile("player_preferences"+fDate+".xml", stringBuilder.toString());
+			Toast.makeText(activity.getApplicationContext(), activity.getString(R.string.settings_export_toast_success)+" Downloads/player_preferences"+fDate+".xml", Toast.LENGTH_LONG).show();
 
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
