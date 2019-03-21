@@ -1,21 +1,15 @@
 package ch.blinkenlights.android.vanilla.settings.export;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 public class Import extends Activity {
 
@@ -52,24 +46,18 @@ public class Import extends Activity {
 
 	public static void interpretResult(int reqCode, int resCode, Intent res, Activity a){
 		if (reqCode == READ_REQUEST_CODE && resCode == Activity.RESULT_OK) {
-
-			int result = ContextCompat.checkSelfPermission(a.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-			if (result != PackageManager.PERMISSION_GRANTED){
-				ActivityCompat.requestPermissions(a,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},reqCode);
-			}
-
-
-
-			Uri uri = null;
 			if (res != null) {
-				uri = res.getData();
-				Log.i(TAG, "Uri: " + uri.toString());
-				File f = new File(uri.getEncodedPath());
+				Uri uri = res.getData();
 
-				Log.i(TAG, "Uri: " + f.getAbsolutePath());
+				//File f = new File(new URI(uri.toString()));
+				Log.i(TAG, "Uri toString: " + uri.toString());
+				Log.i(TAG, "Uri absolute: " + uri.getEncodedPath());
+				Log.i(TAG, "Uri     path: " + uri.getPath());
+				//Log.i(TAG, "File    path: " + f.getAbsolutePath());
+
 				StringBuilder stringBuilder = new StringBuilder();
 				try {
-					FileInputStream inputStream = new FileInputStream(f);
+					InputStream inputStream = a.getContentResolver().openInputStream(uri);
 					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 					String line = null;
 					while ((line = bufferedReader.readLine()) != null) {
@@ -82,7 +70,6 @@ public class Import extends Activity {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
 				Log.e(TAG, "imported: "+stringBuilder.toString());
 
 			}

@@ -45,6 +45,7 @@ import android.content.Intent;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.util.TypedValue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,7 +128,7 @@ public class PreferencesActivity extends PreferenceActivity
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-		Import.interpretResult(requestCode, resultCode,resultData, this);
+		Import.interpretResult(requestCode,resultCode,resultData, this);
 	}
 
 	@Override
