@@ -145,7 +145,7 @@ public class Import extends Activity {
 						for (int e = 0; e < folderlist.getLength(); e++) {
 							folders.add(folderlist.item(e).getTextContent());
 						}
-						mlPrefs.mediaFolders=folders;
+						mlPrefs.blacklistedFolders=folders;
 					}
 
 					if (n.getNodeName().equals("includedAlbums")) {
