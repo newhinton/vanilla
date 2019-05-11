@@ -610,7 +610,7 @@ public final class PlaybackService extends Service
 			} else if (ACTION_CLOSE_NOTIFICATION.equals(action)) {
 				mForceNotificationVisible = false;
 				pause();
-				exitServiceAndNotification(true);// sometimes required to clear notification
+				exitServiceAndNotification(true, true);// sometimes required to clear notification
 			}
 		}
 
@@ -1195,7 +1195,21 @@ public final class PlaybackService extends Service
 
 
 	private void exitServiceAndNotification(boolean removeNotifications){
+		exitServiceAndNotification(removeNotifications, false);
+	}
+
+	private void exitServiceAndNotification(boolean removeNotifications, boolean directExit){
+
+		//direct update, for changes on clicks
+		updateNotification();
+
+
 		int delayInMs=60000;
+
+		//directly exit application if requested
+		if(directExit){
+			delayInMs=0;
+		}
 
 		final boolean fRemoveNotifications = removeNotifications;
 		new Handler().postDelayed(new Runnable() {
@@ -1208,6 +1222,7 @@ public final class PlaybackService extends Service
 				}
 				//Log.e("m", "Delayed exit... now closing!");
 				stopForeground(fRemoveNotifications);
+				//update after exit
 				updateNotification();
 			}
 		}, delayInMs);
