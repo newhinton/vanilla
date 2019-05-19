@@ -1211,16 +1211,20 @@ public final class PlaybackService extends Service
 			delayInMs=0;
 		}
 
+		Log.e("m", "Delayed exit... starting!");
+
 		final boolean fRemoveNotifications = removeNotifications;
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
 
+				mForceNotificationVisible=false;
+
 				if (updateOrDissmissNotification()) {
-					//Log.e("PlaybackService", "Delayed exit... still playing!Abort!");
+					Log.e("PlaybackService", "Delayed exit... still playing!Abort!");
 					return;
 				}
-				//Log.e("m", "Delayed exit... now closing!");
+				Log.e("m", "Delayed exit... now closing!");
 				stopForeground(fRemoveNotifications);
 				//update after exit
 				updateNotification();
@@ -1231,6 +1235,13 @@ public final class PlaybackService extends Service
 	}
 
 	private boolean updateOrDissmissNotification(){
+
+		Log.e("uodn", "mForceNotificationVisible "+mForceNotificationVisible);
+		Log.e("uodn", "mNotificationVisibility "+mNotificationVisibility);
+		Log.e("uodn", "mNotificationVisibility "+mNotificationVisibility);
+		Log.e("uodn", "mState "+((mState & FLAG_PLAYING) != 0));
+		Log.e("uodn", "mCurrentSong "+(mCurrentSong != null));
+
 		return ((mForceNotificationVisible || mNotificationVisibility == VISIBILITY_ALWAYS
 			|| mNotificationVisibility == VISIBILITY_WHEN_PLAYING && (mState & FLAG_PLAYING) != 0) && mCurrentSong != null);
 	}
