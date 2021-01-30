@@ -610,8 +610,7 @@ public final class PlaybackService extends Service
 			} else if (ACTION_CLOSE_NOTIFICATION.equals(action)) {
 				mForceNotificationVisible = false;
 				pause();
-				stopForeground(true); // sometimes required to clear notification
-				updateNotification();
+				exitServiceAndNotification(true, true);// sometimes required to clear notification
 			}
 		}
 
@@ -887,8 +886,10 @@ public final class PlaybackService extends Service
 			// This is the only way to remove a notification created by
 			// startForeground(), even if we are not currently in foreground
 			// mode.
-			stopForeground(true);
-			updateNotification();
+			//stopForeground(true);
+			//updateNotification();
+			exitServiceAndNotification(true);
+
 		} else if (PrefKeys.NOTIFICATION_NAG.equals(key)) {
 			mNotificationNag = settings.getBoolean(PrefKeys.NOTIFICATION_NAG, PrefDefaults.NOTIFICATION_NAG);
 			// no need to update notification: happens on next event
@@ -1070,8 +1071,10 @@ public final class PlaybackService extends Service
 				// actual playback state (or to hit cancel() as this is required to
 				// get rid of it if it was created via notify())
 				boolean removeNotification = (mForceNotificationVisible == false && mNotificationVisibility != VISIBILITY_ALWAYS);
-				stopForeground(removeNotification);
-				updateNotification();
+
+				//stopForeground(removeNotification);
+				//updateNotification();
+				exitServiceAndNotification(removeNotification);
 
 				// Delay entering deep sleep. This allows the headset
 				// button to continue to function for a short period after
@@ -1190,10 +1193,62 @@ public final class PlaybackService extends Service
 		}
 	}
 
+
+	private void exitServiceAndNotification(boolean removeNotifications){
+		exitServiceAndNotification(removeNotifications, false);
+	}
+
+	private void exitServiceAndNotification(boolean removeNotifications, boolean directExit){
+
+		//direct update, for changes on clicks
+		updateNotification();
+
+
+		int delayInMs=60000;
+
+		//directly exit application if requested
+		if(directExit){
+			delayInMs=0;
+		}
+
+		Log.e("m", "Delayed exit... starting!");
+
+		final boolean fRemoveNotifications = removeNotifications;
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+
+				mForceNotificationVisible=false;
+
+				if (updateOrDissmissNotification()) {
+					Log.e("PlaybackService", "Delayed exit... still playing!Abort!");
+					return;
+				}
+				Log.e("m", "Delayed exit... now closing!");
+				stopForeground(fRemoveNotifications);
+				//update after exit
+				updateNotification();
+			}
+		}, delayInMs);
+
+
+	}
+
+	private boolean updateOrDissmissNotification(){
+
+		Log.e("uodn", "mForceNotificationVisible "+mForceNotificationVisible);
+		Log.e("uodn", "mNotificationVisibility "+mNotificationVisibility);
+		Log.e("uodn", "mNotificationVisibility "+mNotificationVisibility);
+		Log.e("uodn", "mState "+((mState & FLAG_PLAYING) != 0));
+		Log.e("uodn", "mCurrentSong "+(mCurrentSong != null));
+
+		return ((mForceNotificationVisible || mNotificationVisibility == VISIBILITY_ALWAYS
+			|| mNotificationVisibility == VISIBILITY_WHEN_PLAYING && (mState & FLAG_PLAYING) != 0) && mCurrentSong != null);
+	}
+
 	private void updateNotification()
 	{
-		if ((mForceNotificationVisible || mNotificationVisibility == VISIBILITY_ALWAYS
-			  || mNotificationVisibility == VISIBILITY_WHEN_PLAYING && (mState & FLAG_PLAYING) != 0) && mCurrentSong != null) {
+		if (updateOrDissmissNotification()) {
 			mNotificationHelper.notify(NOTIFICATION_ID, createNotification(mCurrentSong, mState, mNotificationVisibility));
 		} else {
 			mNotificationHelper.cancel(NOTIFICATION_ID);
