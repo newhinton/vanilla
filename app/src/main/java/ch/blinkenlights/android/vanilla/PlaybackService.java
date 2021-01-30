@@ -25,6 +25,8 @@ package ch.blinkenlights.android.vanilla;
 
 import ch.blinkenlights.android.medialibrary.MediaLibrary;
 import ch.blinkenlights.android.medialibrary.LibraryObserver;
+import ch.blinkenlights.android.medialibrary.MediaLibraryBackend;
+import ch.blinkenlights.android.vanilla.playback.PlaybackTimestampHandler;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -439,9 +441,14 @@ public final class PlaybackService extends Service
 	 */
 	private BastpUtil mBastpUtil;
 
+
+	private PlaybackTimestampHandler mPlaybackTimestampHandler;
+
+
 	@Override
 	public void onCreate()
 	{
+		mPlaybackTimestampHandler = new PlaybackTimestampHandler(this);
 		HandlerThread thread = new HandlerThread("PlaybackService", Process.THREAD_PRIORITY_DEFAULT);
 		thread.start();
 
@@ -517,7 +524,10 @@ public final class PlaybackService extends Service
 		initWidgets();
 
 		updateState(state);
-		setCurrentSong(0);
+		Song s = setCurrentSong(0);
+		if(s!=null){
+			prepareTimeForPlayback(s);
+		}
 
 		sInstance = this;
 		synchronized (sWait) {
@@ -542,7 +552,13 @@ public final class PlaybackService extends Service
 			if (earlyNotification) {
 				Song song = mCurrentSong != null ? mCurrentSong : new Song(-1);
 				startForeground(NOTIFICATION_ID, createNotification(song, mState, VISIBILITY_WHEN_PLAYING));
+				if(song!=null){
+					prepareTimeForPlayback(song);
+				}
 			}
+
+
+
 
 			if (ACTION_TOGGLE_PLAYBACK.equals(action)) {
 				playPause();
@@ -1239,6 +1255,8 @@ public final class PlaybackService extends Service
 	 */
 	public int play()
 	{
+		//restart Playbackhandler if it stopped
+		mPlaybackTimestampHandler.start(mMediaPlayer);
 		synchronized (mStateLock) {
 			if ((mState & FLAG_EMPTY_QUEUE) != 0) {
 				setFinishAction(SongTimeline.FINISH_RANDOM);
@@ -1393,6 +1411,7 @@ public final class PlaybackService extends Service
 		try {
 			mMediaPlayerInitialized = false;
 			mMediaPlayer.reset();
+			mPlaybackTimestampHandler.setSong(song);
 
 			if(mPreparedMediaPlayer.isPlaying()) {
 				// The prepared media player is playing as the previous song
@@ -1421,8 +1440,10 @@ public final class PlaybackService extends Service
 				mPendingSeek = 0;
 			}
 
-			if ((mState & FLAG_PLAYING) != 0)
+			if ((mState & FLAG_PLAYING) != 0){
 				mMediaPlayer.start();
+			}
+
 
 			if ((mState & FLAG_ERROR) != 0) {
 				mErrorMessage = null;
@@ -1444,6 +1465,38 @@ public final class PlaybackService extends Service
 
 		}
 
+		prepareTimeForPlayback(song);
+		mPlaybackTimestampHandler.start(mMediaPlayer);
+		updateNotification();
+
+	}
+
+	private void prepareTimeForPlayback(Song song){
+
+		int state = MediaLibrary.getAlbumUseSongTimestamp(this, song.albumId);
+		boolean jump=false;
+
+		SharedPreferences settings = SharedPrefHelper.getSettings(this);
+		boolean settingForJump = settings.getBoolean(PrefKeys.JUMP_TO_LAST_POSITION_OF_TRACK_STATE, PrefDefaults.JUMP_TO_LAST_POSITION_OF_TRACK_STATE);
+
+		if(state==-1){
+			if(settingForJump){
+				jump = true;
+			}
+		}
+		if(state==1){
+			jump=true;
+		}
+
+		int time = mPlaybackTimestampHandler.getInitialTimestamp() ;
+
+		if(time == -1){
+			jump=false;
+		}
+		if(time > 0 && jump){
+			seekToPosition(time);
+		}
+		mPlaybackTimestampHandler.start(mMediaPlayer);
 		updateNotification();
 
 	}
@@ -1454,6 +1507,10 @@ public final class PlaybackService extends Service
 
 		// Count this song as played
 		mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PLAYCOUNTS, 1, 0, mCurrentSong), 800);
+
+
+		mPlaybackTimestampHandler.stopUpdates();
+		mPlaybackTimestampHandler.updateToZero();
 
 		if (finishAction(mState) == SongTimeline.FINISH_REPEAT_CURRENT) {
 			setCurrentSong(0);
